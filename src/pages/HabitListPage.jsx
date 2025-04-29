@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getAllHabits } from "../services/habitService";
 
-//Компонент HabitListPage
 const HabitListPage = () => {
-    const [habits, setHabits] = useState([]); // Локальное состояние для хранения привычек
+    const [habits, setHabits] = useState([]);
 
     useEffect(() => {
         const fetchHabits = async () => {
             try {
                 const personId = 1;
-                const habitsData = await getAllHabits(personId); // Получаем привычки с сервера
-                setHabits(habitsData); // Сохраняем привычки в локальное состояние
+                const habitsData = await getAllHabits(personId);
+                setHabits(habitsData);
             } catch (error) {
-                console.error("Failed to fetch habits:", error); //Логируем ошибку
+                console.error("Failed to fetch habits:", error);
             }
         };
-        fetchHabits(); // Запускаем загрузку привычек при монтировании компонента
+        fetchHabits();
     }, []);
 
     return (
@@ -24,7 +24,9 @@ const HabitListPage = () => {
             <ul>
                 {habits.map((habit) => (
                     <li key={habit.id}>
-                        {habit.name} — {habit.description}
+                        <Link to={`/habits/${habit.id}`}>
+                            {habit.name} — {habit.description}
+                        </Link>
                     </li>
                 ))}
             </ul>

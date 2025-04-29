@@ -1,27 +1,27 @@
-import React, { useState } from "react";
-import { createHabit } from "../services/habitService"; // а не habitApi! 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import habitApi from "../api/habitApi";
 
-// Компонент CreateHabitPage
-const CreateHabitPage = () => {
+export default function CreateHabitPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [active, setActive] = useState(true); // Добавим состояние для активного поля
-    const [personId, setPersonId] = useState(1); // По умолчанию передаем id пользователя 1
+    const [active, setActive] = useState(true);
+    const [personId, setPersonId] = useState(1);
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-          const habit = {
-            name,           // Используем значения из состояния
-            description,
-            active,
-            personId       // Передаем правильное значение personId
-          };
-
-          const response = await createHabit(habit);          // Отправляем запрос
-          console.log(response);
+            await habitApi.post("/", {
+                name,
+                description,
+                active,
+                personId
+            });
+            navigate("/");
         } catch (error) {
-          console.error("Failed to create habit:", error);
+            console.error("Ошибка при создании привычки:", error);
         }
     };
 
@@ -37,18 +37,24 @@ const CreateHabitPage = () => {
                     required
                 />
                 <br />
-                <input
-                    type="text"
+                <textarea
                     placeholder="Habit description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
                 />
                 <br />
-                <button type="submit">Create new habit!</button>
+                <label>
+                    Active:
+                    <input
+                        type="checkbox"
+                        checked={active}
+                        onChange={(e) => setActive(e.target.checked)}
+                    />
+                </label>
+                <br />
+                <button type="submit">Create</button>
             </form>
         </div>
     );
-};
-
-export default CreateHabitPage;
+}

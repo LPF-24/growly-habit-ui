@@ -1,13 +1,19 @@
 import axios from "axios";
 
-// Создаём настроенный экземпляр axios, чтобы каждый раз не указывать базовый URL и заголовки
+// Базовая настройка
 const habitApi = axios.create({
-    baseURL: 'http://localhost:8080/habits', // Базовый URL — все запросы будут начинаться с него
+    baseURL: "http://localhost:8080/habits",
     headers: {
-        'Content-Type': 'application/json',  // Устанавливаем тип содержимого как JSON
+        "Content-Type": "application/json",
     },
-    withCredentials: false, // <--- добавь сюда!
+    withCredentials: false,
 });
 
-// Экспортируем этот экземпляр, чтобы использовать его в сервисах
+// Удобные методы для работы
+habitApi.getHabit = (id) => habitApi.get(`/${id}`).then(res => res.data);
+habitApi.getAllHabits = (personId) => habitApi.get(`/?personId=${personId}`).then(res => res.data);
+habitApi.createHabit = (habit) => habitApi.post("/", habit).then(res => res.data);
+habitApi.updateHabit = (id, habit) => habitApi.patch(`/${id}`, habit).then(res => res.data);
+habitApi.deleteHabit = (id) => habitApi.delete(`/${id}`);
+
 export default habitApi;
